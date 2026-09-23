@@ -1,0 +1,5 @@
+.env
+__pycache__/
+*.pyc
+.batch_tmp/
+config/zotero-mcp-config.json

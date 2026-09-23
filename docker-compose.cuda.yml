@@ -1,0 +1,31 @@
+services:
+  zotero-mcp:
+    image: zotero-mcp:0.13.0-jina-cuda
+    build:
+      dockerfile: Dockerfile.cuda
+    environment:
+      ZOTERO_SEMANTIC_ENABLED: "true"
+      ZOTERO_EMBEDDING_MODEL: ${ZOTERO_EMBEDDING_MODEL:-jinaai/jina-embeddings-v5-text-small}
+      ZOTERO_EMBEDDING_DEVICE: ${ZOTERO_EMBEDDING_DEVICE:-cuda}
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      HF_HOME: /root/.cache/huggingface
+      HUGGINGFACE_HUB_CACHE: /root/.cache/huggingface/hub
+    gpus: all
+    volumes:
+      - type: bind
+        source: ./config/zotero-mcp-config.json
+        target: /root/.config/zotero-mcp/config.json
+        read_only: false
+      - type: volume
+        source: zotero-mcp-chroma
+        target: /root/.config/zotero-mcp/chroma_db
+      - type: volume
+        source: jina-model-cache
+        target: /root/.cache/huggingface
+
+volumes:
+  zotero-mcp-chroma:
+  jina-model-cache:
+    external: true
+    name: jina-embedding-benchmark_jina-model-cache

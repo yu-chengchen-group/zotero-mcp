@@ -1,0 +1,50 @@
+services:
+  zotero-mcp:
+    image: ${ZOTERO_MCP_IMAGE:-ghcr.io/yu-chengchen-group/zotero-mcp:0.13.0-cpu}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7900}
+        HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7900}
+        NO_PROXY: ${DOCKER_NO_PROXY:-localhost,127.0.0.1,host.docker.internal}
+    command:
+      - serve
+      - --transport
+      - streamable-http
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+    environment:
+      ZOTERO_API_KEY: ${ZOTERO_API_KEY}
+      ZOTERO_LIBRARY_ID: ${ZOTERO_LIBRARY_ID}
+      ZOTERO_LIBRARY_TYPE: ${ZOTERO_LIBRARY_TYPE:-user}
+      ZOTERO_LOCAL: "${ZOTERO_LOCAL:-true}"
+      ZOTERO_LOCAL_API_BASE: ${ZOTERO_LOCAL_API_BASE:-http://host.docker.internal:23119/api}
+      ZOTERO_DB_PATH: ${ZOTERO_DB_PATH:-/mnt/zotero/zotero.sqlite}
+      ZOTERO_SEMANTIC_ENABLED: "false"
+      ZOTERO_MCP_TOOLSETS: ${ZOTERO_MCP_TOOLSETS:-none,scite,-chatgpt-connector}
+      ZOTERO_MCP_AUTH_ISSUER: ${ZOTERO_MCP_AUTH_ISSUER:-https://auth.chen-group.cn}
+      ZOTERO_MCP_RESOURCE_URL: ${ZOTERO_MCP_RESOURCE_URL:-https://zotero-xxx.chen-group.cn}
+      ZOTERO_MCP_JWKS_URI: ${ZOTERO_MCP_JWKS_URI:-https://auth.chen-group.cn/jwks.json}
+      FASTMCP_STREAMABLE_HTTP_PATH: /
+      MALLOC_ARENA_MAX: "2"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+      TOKENIZERS_PARALLELISM: "false"
+      HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7900}
+      HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7900}
+      NO_PROXY: ${DOCKER_NO_PROXY:-localhost,127.0.0.1,host.docker.internal}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - type: bind
+        source: ${ZOTERO_DATA_DIR:-E:/文档/Zotero}
+        target: /mnt/zotero
+        read_only: true
+    ports:
+      - "127.0.0.1:${ZOTERO_MCP_PORT:-8000}:8000"
+    restart: unless-stopped
+
