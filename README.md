@@ -34,6 +34,8 @@ Zotero Desktop / Actions & Tags 脚本统一维护在独立仓库
 
 ```powershell
 Copy-Item env/.env.example env/.env
+gh auth refresh -h github.com -s read:packages
+gh auth token | docker login ghcr.io -u <GitHub用户名> --password-stdin
 docker compose --env-file env/.env pull
 docker compose --env-file env/.env up -d
 ```
