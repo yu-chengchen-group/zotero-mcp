@@ -1,6 +1,6 @@
 # zotero-mcp
 
-`zotero-mcp` 是课题组定制的 Zotero MCP 网关。学生默认使用 CPU 镜像，只提供 Zotero MCP，不启用语义索引、向量嵌入或 Chroma；PC-CYC 使用 CUDA override 启用 Jina Embedding 和 Markdown-only RAG。
+`zotero-mcp` 提供 Zotero MCP 网关。默认 CPU 镜像不启用语义索引、向量嵌入或 Chroma；CUDA override 启用 Jina Embedding 和 Markdown-only RAG。
 
 ## 职责边界
 
@@ -17,20 +17,20 @@
 
 | 目录/文件 | 职责 |
 | --- | --- |
-| `Dockerfile` | 构建学生默认 CPU 镜像，不安装 semantic extra |
-| `Dockerfile.cuda` | 构建 PC-CYC CUDA + Embedding/RAG 镜像 |
+| `Dockerfile` | 构建默认 CPU 镜像，不安装 semantic extra |
+| `Dockerfile.cuda` | 构建 CUDA + Embedding/RAG 镜像 |
 | `docker/` | Windows 主机 Zotero API 适配、Markdown 索引和工具补丁 |
 | `config/` | Zotero 数据库与语义索引配置 |
 | `env/` | 本地运行参数模板；真实凭据不提交 |
-| `docker-compose.yml` | 学生默认 CPU 配置 |
-| `docker-compose.cuda.yml` | PC-CYC GPU override |
+| `docker-compose.yml` | 默认 CPU 配置 |
+| `docker-compose.cuda.yml` | GPU override |
 
 Zotero Desktop / Actions & Tags 脚本统一维护在独立仓库
 [`../zotero-actions/`](../zotero-actions/) 中，不属于 MCP 服务实现。
 
 ## 启动
 
-学生首次使用时复制环境模板，将 `ZOTERO_DATA_DIR` 改为自己的 Zotero 数据目录，并将 `ZOTERO_MCP_RESOURCE_URL` 中的 `xxx` 改为分配给自己的标识：
+首次使用时复制环境模板，将 `ZOTERO_DATA_DIR` 改为自己的 Zotero 数据目录，并将 `ZOTERO_MCP_RESOURCE_URL` 中的 `xxx` 改为分配给自己的标识：
 
 ```powershell
 Copy-Item env/.env.example env/.env
@@ -46,7 +46,7 @@ docker compose --env-file env/.env up -d
 2. `ZOTERO_DATA_DIR` 指向包含 `zotero.sqlite` 的 Zotero 数据目录；
 3. Docker Desktop 可以正常运行 Linux 容器。
 
-学生默认镜像不安装语义检索依赖，不加载 Embedding 模型，也不创建 Chroma 向量索引，因此不需要 NVIDIA GPU。
+默认镜像不安装语义检索依赖，不加载 Embedding 模型，也不创建 Chroma 向量索引，因此不需要 NVIDIA GPU。
 
 服务仅绑定本机：
 
@@ -54,9 +54,9 @@ docker compose --env-file env/.env up -d
 http://127.0.0.1:8000
 ```
 
-## PC-CYC GPU 模式
+## GPU 模式
 
-PC-CYC 使用 CUDA override：
+使用 CUDA override：
 
 ```powershell
 docker compose --env-file env/.env -f docker-compose.yml -f docker-compose.cuda.yml up -d --build
@@ -80,7 +80,7 @@ docker compose --env-file env/.env -f docker-compose.yml -f docker-compose.cuda.
 
 Tunnel 不放进 MCP 容器，也不暴露 Zotero `23119`、PaddleOCR `8080` 或 document2md `18321`。
 
-Cloudflare Tunnel 的公网域名由课题组统一分配；本机目标固定为：
+Cloudflare Tunnel 的公网域名由管理员分配；本机目标固定为：
 
 ```text
 ChatGPT 网页版
