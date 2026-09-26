@@ -6,8 +6,8 @@ services:
       dockerfile: Dockerfile
       args:
         PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
-        HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7900}
-        HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7900}
+        HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7897}
+        HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7897}
         NO_PROXY: ${DOCKER_NO_PROXY:-localhost,127.0.0.1,host.docker.internal}
     command:
       - serve
@@ -34,8 +34,8 @@ services:
       OMP_NUM_THREADS: "2"
       MKL_NUM_THREADS: "2"
       TOKENIZERS_PARALLELISM: "false"
-      HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7900}
-      HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7900}
+      HTTP_PROXY: ${DOCKER_HTTP_PROXY:-http://host.docker.internal:7897}
+      HTTPS_PROXY: ${DOCKER_HTTPS_PROXY:-http://host.docker.internal:7897}
       NO_PROXY: ${DOCKER_NO_PROXY:-localhost,127.0.0.1,host.docker.internal}
     extra_hosts:
       - "host.docker.internal:host-gateway"

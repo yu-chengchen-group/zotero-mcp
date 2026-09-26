@@ -38,6 +38,6 @@ def install() -> None:
         authorization_servers=[AnyHttpUrl(issuer)],
         base_url=resource_url,
         resource_base_url=resource_url,
-        scopes_supported=[],
+        scopes_supported=["offline_access"],
         resource_name="Zotero",
     )
