@@ -1,6 +1,6 @@
 services:
   zotero-mcp:
-    image: ${ZOTERO_MCP_IMAGE:-ghcr.io/yu-chengchen-group/zotero-mcp:0.13.0-cpu}
+    image: ${ZOTERO_MCP_IMAGE:-ghcr.io/yu-chengchen-group/zotero-mcp:0.13.1-cpu}
     build:
       context: .
       dockerfile: Dockerfile

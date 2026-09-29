@@ -1,6 +1,6 @@
 services:
   zotero-mcp:
-    image: zotero-mcp:0.13.0-jina-cuda
+    image: zotero-mcp:0.13.1-jina-cuda
     build:
       dockerfile: Dockerfile.cuda
     environment:

@@ -13,7 +13,7 @@ ARG NO_PROXY
 
 RUN python -m pip install --no-cache-dir --break-system-packages \
     --index-url "${PIP_INDEX_URL}" \
-    "zotero-mcp-server[scite]==0.13.0"
+    "zotero-mcp-server[scite]==0.13.1"
 
 COPY docker/zotero_mcp_entrypoint.py /app/zotero_mcp_entrypoint.py
 COPY docker/zotero_mcp_attachment_patch.py /app/zotero_mcp_attachment_patch.py

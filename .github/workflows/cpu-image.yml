@@ -29,5 +29,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/yu-chengchen-group/zotero-mcp:0.13.0-cpu
+            ghcr.io/yu-chengchen-group/zotero-mcp:0.13.1-cpu
             ghcr.io/yu-chengchen-group/zotero-mcp:cpu

@@ -1,4 +1,4 @@
-"""为 v0.13.0 保留严格 Markdown 来源和失败时旧 chunks 保护。"""
+"""限制本地全文来源，并在增量重写失败时保留旧 chunks。"""
 
 from pathlib import Path
 
