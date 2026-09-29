@@ -20,7 +20,7 @@
 | `Dockerfile` | 构建默认 CPU 镜像，不安装 semantic extra |
 | `Dockerfile.cuda` | 构建 CUDA + Embedding/RAG 镜像 |
 | `docker/` | Windows 主机 Zotero API 适配、Markdown 索引和工具补丁 |
-| `config/` | Zotero 数据库与语义索引配置 |
+| `config/` | GPU 语义索引配置模板与本地配置 |
 | `env/` | 本地运行参数模板；真实凭据不提交 |
 | `docker-compose.yml` | 默认 CPU 配置 |
 | `docker-compose.cuda.yml` | GPU override |
@@ -33,11 +33,11 @@ Zotero Desktop / Actions & Tags 脚本统一维护在独立仓库
 首次使用时复制环境模板，将 `ZOTERO_DATA_DIR` 改为自己的 Zotero 数据目录，并将 `ZOTERO_MCP_RESOURCE_URL` 中的 `xxx` 改为分配给自己的标识：
 
 ```powershell
-Copy-Item env/.env.example env/.env
+Copy-Item env/.env.example .env
 gh auth refresh -h github.com -s read:packages
 gh auth token | docker login ghcr.io -u <GitHub用户名> --password-stdin
-docker compose --env-file env/.env pull
-docker compose --env-file env/.env up -d
+docker compose pull
+docker compose up -d
 ```
 
 启动前确认：
@@ -56,25 +56,24 @@ http://127.0.0.1:8000
 
 ## GPU 模式
 
-使用 CUDA override：
+首次使用先复制语义配置，再使用 CUDA override：
 
 ```powershell
-docker compose --env-file env/.env -f docker-compose.yml -f docker-compose.cuda.yml up -d --build
+Copy-Item config/zotero-mcp-config.example.json config/zotero-mcp-config.json
+docker compose -f docker-compose.yml -f docker-compose.cuda.yml up -d --build
 ```
 
 - GPU 模式在同一个容器中运行 Embedding 和 MCP。
 - Chroma 数据使用 `zotero-mcp-chroma` Docker volume 持久化。
 - Hugging Face 模型缓存使用独立的外部 Docker volume。
-- Zotero 数据目录以只读方式挂载到 `/mnt/zotero`；语义索引正文固定为 Markdown-only，不修改原始附件。
-- `docker/zotero_mcp_attachment_patch.py` 约束语义索引：存在 document2md Markdown 时只读取 Markdown；不存在 Markdown 时只索引条目元数据；不得回退解析 PDF、HTML 或其他附件正文。升级 `zotero-mcp-server` 后必须验证该补丁仍生效，避免意外恢复 PDF 正文嵌入。
-- 同一 Markdown 附件被原地覆盖时，v0.13.0 上游增量扫描不一定能发现文件内容变化；当前已舍弃 mtime 状态补丁。更新 MD 后需重新建立语义索引，或让 Zotero 附件记录本身发生变化。PDF 自身变化不会触发正文嵌入。
-- 需要从头重建语义索引时，从项目目录运行固定入口：
+- Zotero 数据目录只读挂载；语义索引只读取 Markdown，失败时保留元数据，不回退 PDF。
+- 原地覆盖 Markdown 不一定触发增量更新；需要时执行全量重建：
 
 ```powershell
 .\update-semantic-index.ps1
 ```
 
-该脚本会清空整个 Chroma collection，再为当前 Zotero library 全量重建索引；会覆盖其他库在此 collection 中的索引。它通过 `/app/zotero_mcp_entrypoint.py` 启动 CLI，并启用 `--force-rebuild --fulltext --clear-fulltext-cache --allow-mass-deletion`，确保 Markdown、Jina 和本地适配补丁生效。仅在确实要清空并重建整个索引时运行。不要直接执行容器内的裸命令 `zotero-mcp update-db --fulltext`；裸命令会绕过本项目入口补丁。
+该脚本会清空当前 Chroma collection 后全量重建，仅在明确需要重建时运行。
 
 ## Cloudflare Tunnel
 

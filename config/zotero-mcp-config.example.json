@@ -1,0 +1,25 @@
+{
+  "semantic_search": {
+    "collection_name": "zotero_library_jina_small",
+    "embedding_model": "jinaai/jina-embeddings-v5-text-small",
+    "embedding_config": {
+      "dtype": "bfloat16",
+      "batch_size": 4,
+      "task": "retrieval",
+      "document_prompt_name": "document",
+      "query_prompt_name": "query",
+      "max_seq_length": 8192,
+      "truncate_dim": 512
+    },
+    "extraction": {
+      "attachment_priority": [
+        "markdown"
+      ]
+    },
+    "chunking": {
+      "enabled": true,
+      "chunk_size": 3000,
+      "max_chunks_per_item": 50000
+    }
+  }
+}
