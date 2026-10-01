@@ -41,7 +41,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - type: bind
-        source: ${ZOTERO_DATA_DIR:-E:/文档/Zotero}
+        source: ${ZOTERO_DATA_DIR:-E:/01_文档/Zotero}
         target: /mnt/zotero
         read_only: true
     ports:
