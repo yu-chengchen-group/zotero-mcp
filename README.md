@@ -1,6 +1,39 @@
 # zotero-mcp
 
-`zotero-mcp` 提供 Zotero MCP 网关。默认 CPU 镜像不启用语义索引、向量嵌入或 Chroma；CUDA override 启用 Jina Embedding 和 Markdown-only RAG。
+`zotero-mcp` 提供 Zotero MCP 网关。学生默认使用 CPU 模式，不需要 NVIDIA GPU。
+
+## 学生快速开始
+
+先安装 Zotero Desktop、Docker Desktop、Git 和 GitHub CLI，并完成 `gh auth login`。首次使用还需按下方“首次 GHCR 登录与手工启动”完成一次 GitHub Packages 登录。
+
+然后：
+
+```powershell
+gh repo clone yu-chengchen-group/zotero-mcp
+cd zotero-mcp
+.\install.cmd
+```
+
+安装器会检查 Docker/GitHub 登录，自动寻找默认 Zotero 数据目录；无法自动确定时才询问。还会询问管理员分配的 Zotero MCP 公网地址，并自动创建 `.env`、拉取镜像和启动容器。
+
+安装后启动 Zotero，再运行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1 doctor
+```
+
+更新或卸载：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1 update
+powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1 uninstall
+```
+
+更新只接受 fast-forward，并在仓库有本地修改时停止。卸载只删除 Zotero MCP 容器，保留 `.env` 和 Zotero 数据。
+
+## 维护者说明
+
+默认 CPU 镜像不启用语义索引、向量嵌入或 Chroma；CUDA override 启用 Jina Embedding 和 Markdown-only RAG。
 
 ## 职责边界
 
@@ -28,9 +61,9 @@
 Zotero Desktop / Actions & Tags 脚本统一维护在独立仓库
 [`../zotero-actions/`](../zotero-actions/) 中，不属于 MCP 服务实现。
 
-## 启动
+## 首次 GHCR 登录与手工启动
 
-首次使用时复制环境模板，将 `ZOTERO_DATA_DIR` 改为自己的 Zotero 数据目录，并将 `ZOTERO_MCP_RESOURCE_URL` 中的 `xxx` 改为分配给自己的标识：
+学生只需要使用本节中的 GitHub Packages 登录命令一次；其余步骤由 `install.cmd` 自动完成。维护者需要绕过安装器时，可完整执行以下手工流程：
 
 ```powershell
 Copy-Item env/.env.example .env
